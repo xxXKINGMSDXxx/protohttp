@@ -1,0 +1,78 @@
+syntax = "proto2";
+
+package http.proto;
+option go_package = "./http_pb";
+
+enum HttpMethod {
+    GET     = 0;
+    POST    = 1;
+    PUT     = 2;
+    DELETE  = 3;
+    PATCH   = 4;
+    HEAD    = 5;
+    OPTIONS = 6;
+}
+
+enum HttpStatus {
+    CONTINUE                  = 100;
+    SWITCHING_PROTOCOLS       = 101;
+    OK                        = 200;
+    CREATED                   = 201;
+    ACCEPTED                  = 202;
+    NO_CONTENT                = 204;
+    MOVED_PERMANENTLY         = 301;
+    FOUND                     = 302;
+    NOT_MODIFIED              = 304;
+    BAD_REQUEST               = 400;
+    UNAUTHORIZED              = 401;
+    PAYMENT_REQUIRED          = 402;
+    FORBIDDEN                 = 403;
+    NOT_FOUND                 = 404;
+    METHOD_NOT_ALLOWED        = 405;
+    NOT_ACCEPTABLE            = 406;
+    REQUEST_TIMEOUT           = 408;
+    CONFLICT                  = 409;
+    GONE                      = 410;
+    PAYLOAD_TOO_LARGE         = 413;
+    URI_TOO_LONG              = 414;
+    UNSUPPORTED_MEDIA_TYPE    = 415;
+    TOO_MANY_REQUESTS         = 429;
+    INTERNAL_SERVER_ERROR     = 500;
+    NOT_IMPLEMENTED           = 501;
+    BAD_GATEWAY               = 502;
+    SERVICE_UNAVAILABLE       = 503;
+    GATEWAY_TIMEOUT           = 504;
+    HTTP_VERSION_NOT_SUPPORTED = 505;
+}
+
+message Header {
+    required string key   = 1;
+    required string value = 2;
+}
+
+message Body {
+    required bytes  content = 1;
+}
+message HttpRequest {
+    required HttpMethod   method  = 1;
+    required string       path    = 2;
+    repeated Header       headers = 3;
+    optional Body         body    = 4;
+}
+
+message HttpResponse {
+    required HttpStatus   status  = 1;
+    repeated Header       headers = 2;
+    optional Body         body    = 3;
+}
+
+message Envelope {
+    enum HttpProtoEncoding {
+        UNCOMPRESSED = 0;
+        COMPRESSED   = 1;
+    }
+    required HttpProtoEncoding encoding        = 1;
+    optional HttpRequest       request         = 2;
+    optional HttpResponse      response        = 3;
+    optional bytes             compressed_data = 4; // either compressed request or response
+}
